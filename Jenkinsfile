@@ -32,7 +32,7 @@ pipeline {
                     sh 'docker tag firstcicd:latest medloutt/firstcicd:latest'
 
                     // Push Docker image to Docker Hub with debug information
-                    sh 'docker push medloutt/firstcicd:latest --debug'
+                    sh 'docker push medloutt/firstcicd:latest'
                 }
             }
         }
