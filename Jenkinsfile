@@ -13,7 +13,7 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t MohamedLouttHB/firstcicd .'
+                    sh 'docker build -t medloutt/firstcicd .'
                 }
             }
         }
