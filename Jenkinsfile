@@ -13,21 +13,23 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t medloutt/firstcicd .'
+                    sh 'docker build -t firstcicd .'
                 }
             }
         }
-        stage('Push image to Hub'){
-            steps{
-                script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhub-pwd')]) {
-                   sh 'docker login -u medloutt -p ${dockerhub-pwd}'
+               stage('Push image to dockerhub') {
+                   steps {
+                       script {
+                           // Login to Docker Hub
+                           withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+                               sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+                           }
 
-}
-                   sh 'docker push medloutt/firstcicd'
-                }
-            }
-        }
-
-    }
+                           // Push Docker image to Docker Hub
+                           sh 'docker tag firstcicd:latest medloutt/firstcicd:latest'
+                           sh 'docker push medloutt/firstcicd:latest'
+                       }
+                   }
+               }
+           }
 }
