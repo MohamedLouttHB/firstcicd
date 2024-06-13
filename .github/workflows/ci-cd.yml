@@ -6,8 +6,9 @@ on:
       - testgit
 
 jobs:
-  build-deploy:
-    name: build and deploy spring app to docker
+
+  build:
+    name: build project
     runs-on: ubuntu-latest
     steps:
       - name: check-out the code
@@ -21,5 +22,36 @@ jobs:
 
       - name: Unit Test
         run: mvn clean package -DskipTests
+
+  docker-image:
+    name: build and push docker image
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Build docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: false
+          tags: ${{secrets.DOCKER_USERNAME}}/ges-kpis-backend:latest
+
+      - name: Login to docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.DOCKER_HUB_USERNAME}}
+          password: ${{secrets.DOCKER_HUB_PASSWORD}}
+
+      - name: Push image to docker hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: ${{secrets.DOCKER_USERNAME}}/ges-kpis-backend:latest
+
+
+
+
 
 
