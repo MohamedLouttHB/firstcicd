@@ -9,12 +9,12 @@ on:
       - testgit
 
 jobs:
-  build:
-
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -24,8 +24,13 @@ jobs:
       - name: Build and test
         run: mvn clean package -DskipTests
 
+  deploy-docker:
+    runs-on: ubuntu-latest
+    steps:
+
       - name: Build & push Docker image
         uses: GlueOps/github-actions-build-push-containers@v0.3.7
+        needs: build-test
         with:
           registry: "docker.io"
           dockerhub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
