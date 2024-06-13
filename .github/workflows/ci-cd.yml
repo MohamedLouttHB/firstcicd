@@ -30,14 +30,17 @@ jobs:
   deploy-docker:
     runs-on: ubuntu-latest
     needs: build-test
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build & push Docker image
-        uses: GlueOps/github-actions-build-push-containers@v0.3.7
+      - name: Build
+        id: build
+        uses: cloudposse/github-action-docker-build-push@main
         with:
-          registry: "docker.io"
-          dockerhub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          dockerhub_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          registry: registry.hub.docker.com
+          organization: "${{ github.event.repository.owner.login }}"
+          repository: "${{ github.event.repository.name }}"
+          login: "${{ secrets.DOCKERHUB_USERNAME }}"
+          password: "${{ secrets.DOCKERHUB_PASSWORD }}"
+          platforms: linux/amd64,linux/arm64
